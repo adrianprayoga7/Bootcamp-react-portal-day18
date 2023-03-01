@@ -1,126 +1,187 @@
-import styled, { css } from 'styled-components';
-import bg from './1.jpg';
+import React, {useState} from "react";
+import Modal from "./modal";
+import Styles from './styles';
+import { Form, Field } from "react-final-form";
 
 
-//css untuk tampilan form
-const btn = (light, dark) => css`
-  white-space: nowrap;
-  display: inline-block;
-  border-radius: 5px;
-  padding: 5px 15px;
-  font-size: 16px;
-  color: white;
-  &:visited {
-    color: white;
-  }
-  background-image: linear-gradient(${light}, ${dark});
-  border: 1px solid ${dark};
-  &:hover {
-    background-image: linear-gradient(${light}, ${dark});
-    &[disabled] {
-      background-image: linear-gradient(${light}, ${dark});
-    }
-  }
-  &:visited {
-    color: black;
-  }
-  &[disabled] {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-`
+const BUTTON_WRAPPER_STYLES = {
+  position: "relative",
+  zIndex: 1,
+};
 
-const btnDefault = css`
-  ${btn('black', 'black')} color: white;
-`
+//inisialisasi variable setTime
+const setTime = ms => new Promise(resolve => setTimeout(resolve, ms));
 
-const btnPrimary = btn('blue', 'blue')
-
-export default styled.div`
-  font-family: sans-serif;
-  background-color: white;
-
-  h1 {
-    text-align: center;
-    color: black;
+//set alert untuk menampilkan hasil nilai yang dipilih
+const onSubmit = async values => {
+    await setTime(300)
+    window.alert(JSON.stringify(values, 0, 2))
   }
 
-  & > div {
-    text-align: center;
-  }
 
-  a {
-    display: block;
-    text-align: center;
-    color: #222;
-  }
+export default function App() {
+ 
+  //inisialisasi fungsi open agar button menampilkan modal 
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <>
+      <div style={BUTTON_WRAPPER_STYLES} onClick={() => console.log("clicked")}>
 
-  form {
-    max-width: 800px;
-    background-image: url(${bg});
-    background-repeat: no-repeat;
-    background-size: cover;
-    margin: 10px auto;
-    border: 1px solid #ccc;
-    padding: 20px;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
-    border-radius: 3px;
+        {/* implementasi fungsi open pada button  */}
+        <button onClick={() => setIsOpen(true)}>Open Modal</button>
+          <Modal open={isOpen} onClose={() => setIsOpen(false)}>
 
-    & > div {
-      display: flex;
-      flex-flow: row nowrap;
-      line-height: 2em;
-      margin: 5px;
-      & > label {
-        color: #333;
-        font-weight: bold;
-        width: 110px;
-        font-size: 1em;
-        line-height: 32px;
-      }
-      & > input,
-      & > select,
-      & > textarea {
-        flex: 1;
-        padding: 3px 5px;
-        font-size: 1em;
-        margin-left: 15px;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-      }
-      & > input[type='checkbox'] {
-        margin-top: 7px;
-      }
-      & > div {
-        margin-left: 16px;
-        & > label {
-          display: block;
-          & > input {
-            margin-right: 3px;
-          }
-        }
-      }
-    }
-    & > .buttons {
-      display: flex;
-      flex-flow: row nowrap;
-      justify-content: center;
-      margin-top: 15px;
-    }
-    button {
-      margin: 0 10px;
-      &[type='submit'] {
-        ${btnPrimary};
-      }
-      &[type='button'] {
-        ${btnDefault};
-      }
-    }
-    pre {
-      border: 1px solid #ccc;
-      background: white;
-      box-shadow: inset 1px 1px 3px rgba(0, 0, 0, 0.2);
-      padding: 20px;
-    }
-  }
-`
+
+    {/* display form pada modal ketika di klik button  */}
+  <Styles>
+  <h1>Employee Form</h1>
+    <Form onSubmit={onSubmit} initialValues={{}}
+      render={({ handleSubmit, form, submitting, pristine}) => (
+            <form onSubmit={handleSubmit}>
+              <div>
+                {/* tampilan inputan firstname */}
+                <label>First Name</label>
+                <Field 
+                    name="firstname"
+                    component="input"
+                    type="text"
+                    placeholder="First Name"
+                />
+              </div>
+              {/* tampilan inputan lastname  */}
+              <div>
+                <label>Last Name</label>
+                <Field 
+                    name="lastname"
+                    component="input"
+                    type="text"
+                    placeholder="Last Name"
+                />
+              </div>
+                {/* tampilan checkbox employed  */}
+              <div>
+                <label>Employed</label>
+                <Field name="employed" component="input" type="checkbox" />
+              </div>
+
+              {/* tampilan untuk dropdown select  */}
+              <div>
+                <label>Education</label>
+                <Field name="education" component="select">
+                    <option />
+                    <option value="master">Master</option>
+                    <option value="bachelor">Bachelor</option>
+                    <option value="highschool">High School</option>
+                </Field>
+              </div>
+
+              {/* tampilan untuk mengisi expertise checkbox  */}
+              <div>
+                <label>Expertise</label>
+                <div>
+                    <label>
+                        <Field 
+                            name="expertise"
+                            component="input"
+                            type="checkbox"
+                            value="html"
+                        />{' '} HTML
+                    </label>
+                    <label>
+                        <Field 
+                            name="expertise"
+                            component="input"
+                            type="checkbox"
+                            value="css"
+                        />{' '} CSS
+                    </label>
+                    <label>
+                        <Field 
+                            name="expertise"
+                            component="input"
+                            type="checkbox"
+                            value="javascript"
+                        />{' '} JavaScript
+                    </label>
+                    <label>
+                        <Field 
+                            name="expertise"
+                            component="input"
+                            type="checkbox"
+                            value="node"
+                        />{' '} NodeJS
+                    </label>
+                    <label>
+                        <Field 
+                            name="expertise"
+                            component="input"
+                            type="checkbox"
+                            value="react"
+                        />{' '} ReactJS
+                    </label>
+                </div>
+              </div>
+
+              {/* tampilan form untuk mengisi keterampilan teknologi menggunakan radio button  */}
+              {/* user hanya dapat mengisi salah satunya  */}
+              <div>
+                <label>Preferred Technology</label>
+                <div>
+                    <label>
+                        <Field 
+                            name="tech"
+                            component="input"
+                            type="radio"
+                            value="frontend"
+                        />{' '} Front End
+                    </label>
+                    <label>
+                        <Field 
+                            name="tech"
+                            component="input"
+                            type="radio"
+                            value="backend"
+                        />{' '} Back End
+                    </label>
+                    <label>
+                        <Field 
+                            name="tech"
+                            component="input"
+                            type="radio"
+                            value="fullstack"
+                        />{' '} Full Stack
+                    </label>
+                </div>
+              </div>
+
+              {/* tampilan untuk note  */}
+              <div>
+                <label>Notes</label>
+                <Field name="notes" component="textarea" placeholder="Notes" />
+              </div>
+
+              {/* tampilan button  */}
+              <div className="buttons">
+              <button type="submit" disabled={submitting || pristine}>
+              Submit
+            </button>
+
+            {/* button reset */}
+            <button
+              type="button"
+              onClick={form.reset}
+              disabled={submitting || pristine}
+            >
+              Reset
+            </button>
+              </div>
+            </form>
+        )}
+        />
+          </Styles>
+          </Modal>
+      </div>
+    </>
+  );
+  
+}
